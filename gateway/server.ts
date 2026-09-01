@@ -11,7 +11,7 @@
 import http from 'node:http';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { openDb } from '@northridge/shared';
 
@@ -452,9 +452,12 @@ export function createGateway(
 }
 
 // Thin listen entrypoint (skipped when imported by tests).
+// Built with pathToFileURL (not a manual `file://` template) so the
+// comparison also works on Windows, where import.meta.url is
+// `file:///C:/...` (three slashes + drive letter) rather than the
+// `file://C:/...` a naive template produces.
 const isMain =
-  process.argv[1] &&
-  import.meta.url === `file://${process.argv[1]}`.replace(/\\/g, '/');
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 
 if (isMain) {
   const PORT = Number(process.env.PORT) || 3000;
