@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/github/github-app-config-schema/main/schema.json
+firewall:
+  full_internet_access: false
+
+setup_steps:
+  - name: Install dependencies
+    run: npm install
+  - name: Seed database
+    run: npm run db:reset
+
+start_steps:
+  - name: Start storefront
+    run: npm run dev
+    detect_ports: true
+
+test_steps:
+  - name: Type check
+    run: npm run typecheck
+  - name: Unit tests
+    run: npm test
+  - name: End-to-end tests
+    run: npm run test:e2e
+
+preview:
+  url: http://localhost:3000
